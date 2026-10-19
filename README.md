@@ -58,3 +58,9 @@ A implementação de produção permanece a mesma. Nesta atualização, o teste 
 Validação original no Linux: 3.198 testes aprovados no PhotoCraft e 84 na biblioteca compartilhada, nenhuma falha e 13 testes ignorados pelo projeto. Clippy, formatação, arquitetura e 25 verificações de WebAssembly passaram. Após ampliar a captura, a suíte de docking com 31 testes foi executada novamente e passou.
 
 O ZIP contém patches para `storytold/craft-libs` e `storytold/photocraft`, instruções em português e inglês, relatório de validação, quadros originais e animações. A execução no Windows requer compilar o código com a biblioteca corrigida.
+
+## Teste automatizado no Windows
+
+[Ver execuções do Windows](https://github.com/filipessmedeiros-collab/code/actions/workflows/windows-resize.yml). O workflow aplica os patches aos commits documentados, executa os testes da biblioteca e os testes de docking do PhotoCraft em Windows Server 2022 e compila o aplicativo. Uma execução verde confirma esses testes; o cursor nativo e o arraste visual devem ser conferidos em um desktop Windows.
+
+Após uma execução bem-sucedida, o executável de teste fica em **Artifacts → photocraft-windows-resize-test** (requer login no GitHub). É uma compilação de desenvolvimento para teste, sem assinatura e sem instalador; não substitui uma versão oficial.

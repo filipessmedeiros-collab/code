@@ -1,0 +1,69 @@
+name: Windows - panel resize
+on:
+  push:
+    paths:
+      - '.github/workflows/windows-resize.yml'
+      - 'photocraft-panel-resize.zip'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    env:
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CARGO_TERM_COLOR: always
+      PHOTOCRAFT_NO_PRINT: '1'
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: contribution
+      - uses: actions/checkout@v4
+        with:
+          repository: storytold/craft-libs
+          ref: 5c874d51eeb3de70e735c8ce87a59a7dedd47675
+          path: craft-libs
+      - uses: actions/checkout@v4
+        with:
+          repository: storytold/photocraft
+          ref: d95fdf3181c01ad41e95456091a394b105a9afb2
+          path: photocraft
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Apply production fix and regression tests
+        run: |
+          Expand-Archive contribution/photocraft-panel-resize.zip patches
+          $core = Get-ChildItem patches -Recurse -Filter 01-craft-ui-resize.patch
+          $tests = Get-ChildItem patches -Recurse -Filter 02-photocraft-regression.patch
+          if ($core.Count -ne 1 -or $tests.Count -ne 1) { throw 'Expected exactly two contribution patches' }
+          git -C craft-libs apply --check $core.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C craft-libs apply $core.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C photocraft apply --check $tests.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C photocraft apply $tests.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $library = (Resolve-Path craft-libs/crates/ui).Path.Replace('\', '/')
+          New-Item -ItemType Directory -Force photocraft/.cargo | Out-Null
+          "paths = [`"$library`"]" | Set-Content photocraft/.cargo/config.toml
+      - name: Test shared docking library on Windows
+        working-directory: craft-libs
+        run: cargo test -p craft-ui --features serde --locked
+      - name: Test PhotoCraft panel integration on Windows
+        working-directory: photocraft
+        run: cargo test -p photocraft-ui-egui --lib panel_docking --locked
+      - name: Build Windows application
+        working-directory: photocraft
+        run: cargo build -p photocraft --locked
+      - name: Upload Windows test executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: photocraft-windows-resize-test
+          path: photocraft/target/debug/photocraft.exe
+          if-no-files-found: error
+          retention-days: 14
