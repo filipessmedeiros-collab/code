@@ -4,6 +4,7 @@ on:
     paths:
       - '.github/workflows/windows-resize.yml'
       - 'photocraft-panel-resize.zip'
+      - 'contribuicao/01-craft-ui-resize.patch'
   workflow_dispatch:
 permissions:
   contents: read
@@ -37,7 +38,7 @@ jobs:
       - name: Apply production fix and regression tests
         run: |
           Expand-Archive contribution/photocraft-panel-resize.zip patches
-          $core = Get-ChildItem patches -Recurse -Filter 01-craft-ui-resize.patch
+          $core = Get-Item contribution/contribuicao/01-craft-ui-resize.patch
           $tests = Get-ChildItem patches -Recurse -Filter 02-photocraft-regression.patch
           if ($core.Count -ne 1 -or $tests.Count -ne 1) { throw 'Expected exactly two contribution patches' }
           git -C craft-libs apply --check $core.FullName

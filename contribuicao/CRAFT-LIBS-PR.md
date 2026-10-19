@@ -25,3 +25,11 @@ These captures use real PhotoCraft panel state and pointer events with a softwar
 PhotoCraft will need a separate dependency revision update and its application regression test after this change is merged. The optional screenshot-renderer patch is not part of this contribution.
 
 The shared craftrules repository is not public; please advise if additional applicable standards require adjustments.
+
+## Review follow-up
+
+Reserve a 10-point border (bounded by the available frame size) for resize handles and inset floating tabs, custom group headers and body content. Keep the outer rectangle for move gestures and workspace geometry. This separates resize hit regions from application controls and vertical scrollbars.
+
+Increase the interaction-ID bound to cover all eight floating handles and both prior/current-frame identities. Add regressions for disjoint resize/content rectangles, an actual scrollbar drag, and cancellation of a handle registered beyond the previous capacity. Existing group-move tests use rendered grip positions instead of fixed screen coordinates. Add documentation for the touched geometry and interaction helpers.
+
+Updated Linux validation: full workspace tests 544 passed, 0 failed, 4 ignored; feature-enabled craft-ui tests 92 passed; workspace Clippy with warnings denied and formatting passed. PhotoCraft docking integration: 31 passed, 0 failed. The demonstration GIFs predate the border inset. Earlier Windows validation applies to the first revision; the updated Windows workflow must be run for this follow-up.

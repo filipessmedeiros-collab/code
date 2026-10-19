@@ -64,3 +64,7 @@ O ZIP contém patches para `storytold/craft-libs` e `storytold/photocraft`, inst
 [Ver execuções do Windows](https://github.com/filipessmedeiros-collab/code/actions/workflows/windows-resize.yml). O workflow aplica os patches aos commits documentados, executa os testes da biblioteca e os testes de docking do PhotoCraft em Windows Server 2022 e compila o aplicativo. Uma execução verde confirma esses testes; o cursor nativo e o arraste visual devem ser conferidos em um desktop Windows.
 
 Após uma execução bem-sucedida, o executável de teste fica em **Artifacts → photocraft-windows-resize-test** (requer login no GitHub). É uma compilação de desenvolvimento para teste, sem assinatura e sem instalador; não substitui uma versão oficial.
+
+## Ajustes após a revisão do PR #189
+
+A atualização reserva uma borda para redimensionamento sem sobrepor abas, controles e barras de rolagem; amplia o registro das interações para permitir cancelar todas as alças; e acrescenta testes de regressão. O patch atualizado está em [contribuicao/01-craft-ui-resize.patch](contribuicao/01-craft-ui-resize.patch). O workflow Windows usa esse patch. A validação manual do Windows anterior corresponde à primeira revisão; esta atualização precisa de uma nova execução.
